@@ -11,6 +11,7 @@ public:
 	~Inject();
 private:
 	HMODULE hModule;
+	HANDLE hProcess;
 };
 
 DWORD WINAPI thread(LPVOID param);
