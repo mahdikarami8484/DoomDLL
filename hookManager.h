@@ -2,7 +2,9 @@
 
 #include <windows.h>
 #include <vector>
+
 #include <detours.h>
+#pragma comment(lib, "detours.lib")
 
 struct HookEntry {
 	void** target;

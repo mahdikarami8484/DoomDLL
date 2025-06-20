@@ -1,6 +1,8 @@
 #pragma once
 
 #include <windows.h>
+#include "hookManager.h"
+#include "hooks/d3d9Hooks.h"
 
 class Inject {
 public:
@@ -13,5 +15,7 @@ private:
 	HMODULE hModule;
 	HANDLE hProcess;
 };
+
+extern HookManager gHooks;
 
 DWORD WINAPI thread(LPVOID param);

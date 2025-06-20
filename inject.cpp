@@ -11,17 +11,22 @@ DWORD WINAPI thread(LPVOID param) {
 	FreeLibraryAndExitThread((HMODULE)param, 0);
 }
 
+HookManager gHooks;
+
 Inject::Inject(LPVOID &param) {
 	this->hModule = (HMODULE)param;
 	this->hProcess = GetCurrentProcess();
 	SetProcessAffinityMask(this->hProcess, 1);
+
+	SetupD3D9Hooks();
+	gHooks.EnableHooks();
 }
 
 Inject::~Inject() {
-
+	gHooks.DisableHooks();
 }
 
 void Inject::loop() {
 	// it should be corrected in the future
-	delete this;
+	//delete this;
 }
