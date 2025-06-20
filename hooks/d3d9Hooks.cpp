@@ -1,6 +1,24 @@
 #include "d3d9Hooks.h"
 #include "../rendering/renderer.h"
 
+decltype(&hkCreateDevice) oCreateDevice = nullptr;
+
+HRESULT APIENTRY hkCreateDevice(
+	IDirect3D9* pD3D,
+	UINT Adapter,
+	D3DDEVTYPE DeviceType,
+	HWND hFocusWindow,
+	DWORD BehaviorFlags,
+	D3DPRESENT_PARAMETERS* pPresentationParameters,
+	IDirect3DDevice9** ppReturnedDeviceInterface
+) {
+	pPresentationParameters->BackBufferWidth = 1920;
+	pPresentationParameters->BackBufferHeight = 1080;
+
+	return oCreateDevice(pD3D, Adapter, DeviceType, hFocusWindow,
+		BehaviorFlags, pPresentationParameters, ppReturnedDeviceInterface);
+}
+
 decltype(&hkEndScene) oEndScene = nullptr;
 
 HRESULT WINAPI hkEndScene(IDirect3DDevice9* pDevice) {
@@ -11,6 +29,14 @@ HRESULT WINAPI hkEndScene(IDirect3DDevice9* pDevice) {
 void SetupD3D9Hooks() {
 	IDirect3D9* d3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if (!d3d) return;
+
+	extern HookManager gHooks;
+
+	void** vTable = nullptr;
+	vTable = *reinterpret_cast<void***>(d3d);
+	oCreateDevice = reinterpret_cast<decltype(&hkCreateDevice)>(vTable[16]);
+
+	gHooks.AddHook(reinterpret_cast<void**>(&oCreateDevice), hkCreateDevice);
 
 	D3DPRESENT_PARAMETERS d3dParams = {};
 	d3dParams.Windowed = TRUE;
@@ -25,10 +51,9 @@ void SetupD3D9Hooks() {
 		d3d->Release();
 		return;
 	}
-	void** vTable = *reinterpret_cast<void***>(tempDevice);
+	vTable = *reinterpret_cast<void***>(tempDevice);
 	oEndScene = reinterpret_cast<decltype(&hkEndScene)>(vTable[42]);
 
-	extern HookManager gHooks;
 	gHooks.AddHook(reinterpret_cast<void**>(&oEndScene), hkEndScene);
 
 	tempDevice->Release();
