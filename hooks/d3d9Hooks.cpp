@@ -12,8 +12,8 @@ HRESULT APIENTRY hkCreateDevice(
 	D3DPRESENT_PARAMETERS* pPresentationParameters,
 	IDirect3DDevice9** ppReturnedDeviceInterface
 ) {
-	pPresentationParameters->BackBufferWidth = 1920;
-	pPresentationParameters->BackBufferHeight = 1080;
+	/*pPresentationParameters->BackBufferWidth = GetSystemMetrics(SM_CXSCREEN);
+	pPresentationParameters->BackBufferHeight = GetSystemMetrics(SM_CYSCREEN);*/
 
 	return oCreateDevice(pD3D, Adapter, DeviceType, hFocusWindow,
 		BehaviorFlags, pPresentationParameters, ppReturnedDeviceInterface);
@@ -36,7 +36,7 @@ void SetupD3D9Hooks() {
 	vTable = *reinterpret_cast<void***>(d3d);
 	oCreateDevice = reinterpret_cast<decltype(&hkCreateDevice)>(vTable[16]);
 
-	gHooks.AddHook(reinterpret_cast<void**>(&oCreateDevice), hkCreateDevice);
+	gHooks.AddHook(reinterpret_cast<void**>(&oCreateDevice), hkCreateDevice); // Hook CreateDevice func
 
 	D3DPRESENT_PARAMETERS d3dParams = {};
 	d3dParams.Windowed = TRUE;
@@ -51,10 +51,13 @@ void SetupD3D9Hooks() {
 		d3d->Release();
 		return;
 	}
-	vTable = *reinterpret_cast<void***>(tempDevice);
-	oEndScene = reinterpret_cast<decltype(&hkEndScene)>(vTable[42]);
 
-	gHooks.AddHook(reinterpret_cast<void**>(&oEndScene), hkEndScene);
+	vTable = *reinterpret_cast<void***>(tempDevice);
+
+
+
+	oEndScene = reinterpret_cast<decltype(&hkEndScene)>(vTable[42]);
+	gHooks.AddHook(reinterpret_cast<void**>(&oEndScene), hkEndScene); // Hook EndScene func
 
 	tempDevice->Release();
 	d3d->Release();

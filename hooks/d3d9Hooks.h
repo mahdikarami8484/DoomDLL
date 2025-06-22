@@ -6,7 +6,7 @@
 
 #include "../hookManager.h"
 
-HRESULT APIENTRY hkCreateDevice(
+HRESULT WINAPI hkCreateDevice(
 	IDirect3D9* pD3D,
 	UINT Adapter,
 	D3DDEVTYPE DeviceType,
