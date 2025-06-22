@@ -2,8 +2,8 @@
 
 DWORD WINAPI thread(LPVOID param) {
 
-	Inject* inject = new Inject(param);
-	while (inject) {
+	std::unique_ptr<Inject> inject = std::make_unique<Inject>(param);
+	while (inject.get()) {
 		inject->loop();
 		Sleep(100);
 	};
@@ -28,5 +28,5 @@ Inject::~Inject() {
 
 void Inject::loop() {
 	// it should be corrected in the future
-	//delete this;
+	if (GetAsyncKeyState(VK_F4) & 0x8000) delete this;
 }

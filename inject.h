@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <memory>
 #include "hookManager.h"
 #include "hooks/d3d9Hooks.h"
 
