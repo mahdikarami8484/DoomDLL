@@ -19,6 +19,21 @@ HRESULT APIENTRY hkCreateDevice(
 		BehaviorFlags, pPresentationParameters, ppReturnedDeviceInterface);
 }
 
+HRESULT WINAPI hkSetTexture(LPDIRECT3DDEVICE9 pDevice, DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture)
+{
+	if (pTexture) {
+		IDirect3DTexture9* pTex = (IDirect3DTexture9*)pTexture;
+		D3DSURFACE_DESC desc;
+
+		if (SUCCEEDED(pTex->GetLevelDesc(0, &desc))) {
+			if (desc.Width == 256 && desc.Height == 128 && desc.Format == D3DFMT_DXT1) {
+				return oSetTexture(pDevice, Stage, nullptr);
+			}
+		}
+	}
+	return oSetTexture(pDevice, Stage, pTexture);
+}
+
 decltype(&hkEndScene) oEndScene = nullptr;
 
 HRESULT WINAPI hkEndScene(IDirect3DDevice9* pDevice) {
@@ -55,6 +70,8 @@ void SetupD3D9Hooks() {
 	vTable = *reinterpret_cast<void***>(tempDevice);
 
 
+	oSetTexture = reinterpret_cast<decltype(&hkSetTexture)>(vTable[65]);
+	gHooks.AddHook(reinterpret_cast<void**>(&oSetTexture), hkSetTexture); // Hook SetTexture func
 
 	oEndScene = reinterpret_cast<decltype(&hkEndScene)>(vTable[42]);
 	gHooks.AddHook(reinterpret_cast<void**>(&oEndScene), hkEndScene); // Hook EndScene func
