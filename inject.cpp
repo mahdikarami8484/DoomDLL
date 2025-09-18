@@ -33,6 +33,7 @@ Inject::Inject(LPVOID &param) {
 	SetProcessAffinityMask(this->hProcess, 1);
 
 	SetupD3D9Hooks();
+	SetupGameHooks();
 	gHooks.EnableHooks();
 
 	CreateConsole();
