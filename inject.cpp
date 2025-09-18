@@ -1,4 +1,18 @@
 #include "inject.h"
+void CreateConsole()
+{
+	AllocConsole();
+	FILE* fp;
+	FILE* fpOut;
+	freopen_s(&fpOut, "CONOUT$", "w", stdout);
+
+	FILE* fpIn;
+	freopen_s(&fpIn, "CONIN$", "r", stdin);
+
+	SetConsoleTitleA("Injected DLL Console");
+
+	printf("Console initialized.\n");
+}
 
 DWORD WINAPI thread(LPVOID param) {
 
@@ -20,6 +34,8 @@ Inject::Inject(LPVOID &param) {
 
 	SetupD3D9Hooks();
 	gHooks.EnableHooks();
+
+	CreateConsole();
 }
 
 Inject::~Inject() {
