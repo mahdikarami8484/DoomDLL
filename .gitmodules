@@ -1,3 +1,6 @@
 [submodule "libs/Detours"]
 	path = libs/Detours
 	url = https://github.com/microsoft/Detours.git
+[submodule "libs/doomgeneric"]
+	path = libs/doomgeneric
+	url = https://github.com/mahdikarami8484/doomgeneric.git
