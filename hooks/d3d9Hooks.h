@@ -1,8 +1,13 @@
 #pragma once
 
 #include <d3d9.h>
-
 #pragma comment(lib, "d3d9.lib")
+
+#include <d3dx9.h>
+#pragma comment(lib, "d3dx9.lib")
+
+#include <doomgeneric.h>
+#pragma comment(lib, "doomgeneric.lib")
 
 #include "../hookManager.h"
 
@@ -17,6 +22,10 @@ HRESULT WINAPI hkCreateDevice(
 );
 
 extern decltype(&hkCreateDevice) oCreateDevice;
+
+HRESULT WINAPI hkSetTexture(LPDIRECT3DDEVICE9 pDevice, DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture);
+
+extern decltype(&hkSetTexture) oSetTexture;
 
 HRESULT WINAPI hkEndScene(IDirect3DDevice9* pDevice);
 
